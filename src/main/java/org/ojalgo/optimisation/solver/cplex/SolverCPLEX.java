@@ -50,7 +50,7 @@ import ilog.cplex.IloCplex.Status;
 public final class SolverCPLEX implements Optimisation.Solver {
 
     @FunctionalInterface
-    public static interface Configurator {
+    public interface Configurator {
 
         void configure(final IloCplex cplex, final Optimisation.Options options);
 
@@ -66,6 +66,8 @@ public final class SolverCPLEX implements Optimisation.Solver {
 
         public SolverCPLEX build(final ExpressionsBasedModel model) {
 
+            boolean mip = model.isAnyVariableInteger();
+
             final SolverCPLEX retVal = new SolverCPLEX(model.options);
             final IloCplex delegateSolver = retVal.getDelegateSolver();
 
@@ -79,10 +81,16 @@ public final class SolverCPLEX implements Optimisation.Solver {
                 for (final Variable var : freeModVars) {
 
                     IloNumVarType type = IloNumVarType.Float;
-                    if (var.isBinary()) {
-                        type = IloNumVarType.Bool;
-                    } else if (var.isInteger()) {
-                        type = IloNumVarType.Int;
+                    if (mip) {
+                        // When relaxing the MIP property of the model
+                        // the individual variables maintain the 'info' that
+                        // they where modelled as integer/binary.
+                        // This is because of how the ojAlgo IntegerSolver works.
+                        if (var.isBinary()) {
+                            type = IloNumVarType.Bool;
+                        } else if (var.isInteger()) {
+                            type = IloNumVarType.Int;
+                        }
                     }
 
                     double unadjustedLowerLimit = var.getUnadjustedLowerLimit();
