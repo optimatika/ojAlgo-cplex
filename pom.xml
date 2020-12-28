@@ -11,7 +11,6 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.target>1.8</maven.compiler.target>
         <maven.compiler.source>1.8</maven.compiler.source>
-        <ojalgo.version>48.4.0-SNAPSHOT</ojalgo.version>
         <junit.jupiter.version>5.7.0</junit.jupiter.version>
         <!-- You have to change this! -->
         <path.installation.cplex>/Applications/CPLEX_Studio_Community128/cplex</path.installation.cplex>
@@ -29,12 +28,12 @@
         <dependency>
             <groupId>org.ojalgo</groupId>
             <artifactId>ojalgo</artifactId>
-            <version>${ojalgo.version}</version>
+            <version>48.4.0</version>
         </dependency>
         <dependency>
             <groupId>org.ojalgo</groupId>
             <artifactId>ojalgo</artifactId>
-            <version>${ojalgo.version}</version>
+            <version>48.4.0</version>
             <classifier>tests</classifier>
             <type>test-jar</type>
             <scope>test</scope>
