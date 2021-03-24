@@ -64,6 +64,7 @@ public final class SolverCPLEX implements Optimisation.Solver {
             super();
         }
 
+        @Override
         public SolverCPLEX build(final ExpressionsBasedModel model) {
 
             boolean mip = model.isAnyVariableInteger();
@@ -121,6 +122,7 @@ public final class SolverCPLEX implements Optimisation.Solver {
             return retVal;
         }
 
+        @Override
         public boolean isCapable(final ExpressionsBasedModel model) {
             return true; // CPLEX can handle anything/everything ExpressionsBasedModel can model.
         }
@@ -253,6 +255,7 @@ public final class SolverCPLEX implements Optimisation.Solver {
         myDelegateVariables = new ArrayList<>();
     }
 
+    @Override
     public void dispose() {
 
         Solver.super.dispose();
@@ -262,6 +265,7 @@ public final class SolverCPLEX implements Optimisation.Solver {
         }
     }
 
+    @Override
     public Result solve(final Result kickStarter) {
 
         try {
