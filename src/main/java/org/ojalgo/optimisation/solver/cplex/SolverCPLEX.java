@@ -1,5 +1,5 @@
 /*
- * Copyright 1997-2020 Optimatika
+ * Copyright 1997-2021 Optimatika
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -50,7 +50,7 @@ import ilog.cplex.IloCplex.Status;
 public final class SolverCPLEX implements Optimisation.Solver {
 
     @FunctionalInterface
-    public static interface Configurator {
+    public interface Configurator {
 
         void configure(final IloCplex cplex, final Optimisation.Options options);
 
@@ -64,7 +64,10 @@ public final class SolverCPLEX implements Optimisation.Solver {
             super();
         }
 
+        @Override
         public SolverCPLEX build(final ExpressionsBasedModel model) {
+
+            boolean mip = model.isAnyVariableInteger();
 
             final SolverCPLEX retVal = new SolverCPLEX(model.options);
             final IloCplex delegateSolver = retVal.getDelegateSolver();
@@ -79,10 +82,16 @@ public final class SolverCPLEX implements Optimisation.Solver {
                 for (final Variable var : freeModVars) {
 
                     IloNumVarType type = IloNumVarType.Float;
-                    if (var.isBinary()) {
-                        type = IloNumVarType.Bool;
-                    } else if (var.isInteger()) {
-                        type = IloNumVarType.Int;
+                    if (mip) {
+                        // When relaxing the MIP property of the model
+                        // the individual variables maintain the 'info' that
+                        // they where modelled as integer/binary.
+                        // This is because of how the ojAlgo IntegerSolver works.
+                        if (var.isBinary()) {
+                            type = IloNumVarType.Bool;
+                        } else if (var.isInteger()) {
+                            type = IloNumVarType.Int;
+                        }
                     }
 
                     double unadjustedLowerLimit = var.getUnadjustedLowerLimit();
@@ -113,6 +122,7 @@ public final class SolverCPLEX implements Optimisation.Solver {
             return retVal;
         }
 
+        @Override
         public boolean isCapable(final ExpressionsBasedModel model) {
             return true; // CPLEX can handle anything/everything ExpressionsBasedModel can model.
         }
@@ -245,6 +255,7 @@ public final class SolverCPLEX implements Optimisation.Solver {
         myDelegateVariables = new ArrayList<>();
     }
 
+    @Override
     public void dispose() {
 
         Solver.super.dispose();
@@ -254,6 +265,7 @@ public final class SolverCPLEX implements Optimisation.Solver {
         }
     }
 
+    @Override
     public Result solve(final Result kickStarter) {
 
         try {
