@@ -22,9 +22,11 @@
 package org.ojalgo.optimisation.solver.cplex;
 
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Disabled;
 import org.ojalgo.optimisation.ExpressionsBasedModel;
 import org.ojalgo.optimisation.integer.P20140819;
 
+@Disabled
 public class P20140819WithCPLEX extends P20140819 {
 
     @BeforeAll
